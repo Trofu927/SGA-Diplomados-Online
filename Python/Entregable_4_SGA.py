@@ -242,6 +242,55 @@ class SGA:
         else:
             print("No hay alumnos para generar certificados.")
 
+    def Generar_Reporte(self):
+        print("\n--- Opciones de Reporte ---\n")
+        print("1. Reporte General")
+        print("2. Reporte de Alumnos")
+        print("3. Reporte de Profesores")
+        print("---------------------------")
+        opcion = input("Seleccione un tipo de reporte: ")
+
+        match opcion:
+            case "1":
+                self.Reporte_General()
+            case "2":
+                self.Reporte_Alumnos()
+            case "3":
+                self.Reporte_Profesores()
+            case _:
+                print("Opción no válida.")
+
+    def Reporte_General(self):
+        print("\n=========================================")
+        print("        REPORTE GENERAL DEL SGA          ")
+        print("=========================================")
+        self.Reporte_Alumnos()
+        print("-----------------------------------------")
+        self.Reporte_Profesores()
+        print("=========================================")
+        
+    def Reporte_Alumnos(self):
+        print("\n--- REPORTE DE ALUMNOS REGISTRADOS ---")
+        if not self.lista_alumnos:
+            print("No hay alumnos registrados.")
+            return
+        for alumno in self.lista_alumnos:
+            tres_notas = len(alumno.notas) == 3
+            aprobado = (alumno.programa.evaluarAprobacion(alumno.notas) and tres_notas)
+            estatus = "APROBADO" if aprobado else "REPROBADO/PENDIENTE"
+            promedio = alumno.consultarPromedio()
+            print(f"Alumno: {alumno.nombre} | Cédula: {alumno.cedula} | Correo: {alumno.correo}")
+            print(f"Programa: {alumno.programa.nombre_programa} | Notas: {alumno.notas} | Promedio: {promedio:.2f} | Estatus: {estatus}\n")
+
+    def Reporte_Profesores(self):
+        print("\n--- REPORTE DE PROFESORES ACTIVOS ---")
+        if not self.lista_profesores:
+            print("No hay profesores registrados.")
+            return
+        for prof in self.lista_profesores:
+            print(f"Profesor: {prof.nombre} | Cédula: {prof.cedula} | Correo: {prof.correo}")
+            print(f"Especialidad: {prof.especialidad} | Materia Asignada: {prof.materia}\n")
+
     def Salir(self):
         print("\nGuardando cambios y cerrando el sistema...")
         if hasattr(self, 'actualizar_alumnos_txt'):
@@ -262,6 +311,7 @@ class SGA:
             print("3. Registrar Nota")
             print("4. Deshacer Última Nota")
             print("5. Generar Cola de Certificados")
+            print("6. Generar Reporte")
             print("7. Salir")
             print("==========================================")
 
@@ -278,6 +328,8 @@ class SGA:
                     self.Deshacer_Registro()
                 case "5":
                     self.Generar_Cola()
+                case "6":
+                    self.Generar_Reporte()
                 case "7":
                     self.Salir()
                     break
