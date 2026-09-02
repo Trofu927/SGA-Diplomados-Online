@@ -143,7 +143,7 @@ class SGA:
                 return
         nombre = input("Nombre: ")
         correo = input("Correo: ")
-        especialidad = input("Especialidad (Python / Java / C++): ")
+        especialidad = input("Especialidad: ")
         materia = input("Materia Asignada: ")
         nuevo_profesor = Profesor(cedula, nombre, correo, especialidad, materia)
         self.lista_profesores.append(nuevo_profesor)
