@@ -68,6 +68,7 @@ class Bootcamp(Programa_Academico):
 class SGA:
     def __init__(self):
         self.lista_alumnos = []
+        self.pila_notas = []
         self.lista_profesores = []
         self.cola_certificados = []
         self.cargar_alumnos()
@@ -101,7 +102,7 @@ class SGA:
         print("Alumno registrado exitosamente en memoria.")
 
     def guardar_alumno(self, alumno):
-        with open("python/alumnos.txt", "a", encoding="utf-8") as f:
+        with open("alumnos.txt", "a", encoding="utf-8") as f:
             n1 = alumno.notas[0] if len(alumno.notas) > 0 else 0
             n2 = alumno.notas[1] if len(alumno.notas) > 1 else 0
             n3 = alumno.notas[2] if len(alumno.notas) > 2 else 0
@@ -109,7 +110,7 @@ class SGA:
 
     def actualizar_alumnos_txt(self):
         """Sobrescribe alumnos.txt para actualizar las notas modificadas"""
-        with open("python/alumnos.txt", "w", encoding="utf-8") as f:
+        with open("alumnos.txt", "w", encoding="utf-8") as f:
             for alumno in self.lista_alumnos:
                 n1 = alumno.notas[0] if len(alumno.notas) > 0 else 0
                 n2 = alumno.notas[1] if len(alumno.notas) > 1 else 0
@@ -117,10 +118,10 @@ class SGA:
                 f.write(f"{alumno.cedula}, {alumno.nombre}, {alumno.correo}, {alumno.programa.nombre_programa}, {n1}, {n2}, {n3}\n")
 
     def cargar_alumnos(self):
-        if not os.path.exists("python/alumnos.txt"):
+        if not os.path.exists("alumnos.txt"):
             return
 
-        with open("python/alumnos.txt", "r", encoding="utf-8") as f:
+        with open("alumnos.txt", "r", encoding="utf-8") as f:
             for linea in f:
                 datos = [d.strip() for d in linea.strip().split(",")]
                 if len(datos) == 7:
@@ -151,13 +152,13 @@ class SGA:
         print(f"Profesor {nombre} registrado exitosamente")
 
     def guardar_profesor(self, profesor):
-        with open("python/profesores.txt", "a", encoding="utf-8") as f:
+        with open("profesores.txt", "a", encoding="utf-8") as f:
             f.write(f"{profesor.cedula}, {profesor.nombre}, {profesor.correo}, {profesor.especialidad}, {profesor.materia}\n")
 
     def cargar_profesores(self):
-        if not os.path.exists("python/profesores.txt"):
+        if not os.path.exists("profesores.txt"):
             return
-        with open("python/profesores.txt", "r", encoding="utf-8") as f:
+        with open("profesores.txt", "r", encoding="utf-8") as f:
             for linea in f:
                 datos = [d.strip() for d in linea.strip().split(",")]
                 if len(datos) == 5:
@@ -180,7 +181,9 @@ class SGA:
                     exito = alumno_encontrado.registrarNota(nota)
                     self.actualizar_alumnos_txt()
                     if exito:
+                        self.pila_notas.append((alumno_encontrado.cedula, nota))
                         print(f"Nota {nota} asignada a {alumno_encontrado.nombre}.")
+                        self.actualizar_alumnos_txt()
                     else:
                         print(f"Error: {alumno_encontrado.nombre} ya tiene el máximo de 3 notas registradas.")
                 else:
@@ -192,13 +195,16 @@ class SGA:
 
     def Deshacer_Registro(self):
         print("\n--- DESHACER ÚLTIMA NOTA (Pila) ---")
-        cedula_buscar = input("Ingrese la cédula del alumno: ")
+        if not self.pila_notas:
+            print("No hay notas registradas para deshacer.")
+            return
+        cedula_ultima, nota_ultima = self.pila_notas.pop()
         for a in self.lista_alumnos:
-            if a.cedula == cedula_buscar:
+            if a.cedula == cedula_ultima:
                 if a.notas:
-                    nota_removida = a.notas.pop()
+                    a.notas.pop()
                     self.actualizar_alumnos_txt()
-                    print(f"Se eliminó la nota {nota_removida} de {a.nombre}.")
+                    print(f"Se eliminó la nota {nota_ultima} de {a.nombre}.")
                 else:
                     print("El alumno no tiene notas registradas para eliminar.")
                 return
@@ -225,7 +231,7 @@ class SGA:
             nombres_cola = [a.nombre for a in self.cola_certificados]
             print(f"Cola de Certificados (FIFO): {nombres_cola}")
             # --- CREACIÓN Y ESCRITURA EN EL ARCHIVO TXT ---
-            with open("python/certificados_pendientes.txt", "w", encoding="utf-8") as f:
+            with open("certificados_pendientes.txt", "w", encoding="utf-8") as f:
                 f.write("=========================================\n")
                 f.write("   REPORTE DE CERTIFICADOS PENDIENTES    \n")
                 f.write("=========================================\n")
