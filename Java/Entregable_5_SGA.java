@@ -420,7 +420,7 @@ class SGA {
     }
 
     public void deshacerRegistro() {
-        System.out.println("\n--- DESHACER ÚLTIMA NOTA (Pila) ---");
+        System.out.println("\n--- DESHACER ULTIMA NOTA ---");
         if (pilaNotas.isEmpty()) {
             System.out.println("No hay notas registradas para deshacer.");
             return;
