@@ -1,25 +1,15 @@
 ==========================================
    REPORTE DE CERTIFICADOS PENDIENTES
 ==========================================
-Total de graduandos en cola: 4
+Total de graduandos en cola: 2
 
 1. [V-101] Ana Silva
-   - Programa: Curso
+   - Programa: Curso@63947c6b
    - Promedio Final: 10.00
    - Estatus: APROBADO
 
-2. [V-202] Carlos Pérez
-   - Programa: Diplomado
-   - Promedio Final: 13.67
-   - Estatus: APROBADO
-
-3. [V-303] María Gómez
-   - Programa: Bootcamp
-   - Promedio Final: 17.67
-   - Estatus: APROBADO
-
-4. [V-404] Luis Rojas
-   - Programa: Bootcamp
+2. [V-404] Luis Rojas
+   - Programa: Bootcamp@5e481248
    - Promedio Final: 14.33
    - Estatus: APROBADO
 

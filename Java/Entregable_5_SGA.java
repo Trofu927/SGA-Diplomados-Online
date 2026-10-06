@@ -72,15 +72,15 @@ class Persona {
 }
 
 class Alumno extends Persona {
-    private String programa;
+    private ProgramaAcademico programa;
     private ArrayList<Double> notas;
 
-    public Alumno(String cedula, String nombre, String correo, String programa) {
+    public Alumno(String cedula, String nombre, String correo, ProgramaAcademico programa) {
         super(cedula, nombre, correo);
         this.programa = programa;
         this.notas = new ArrayList<>();
     }
-    public String getPrograma() { return programa; }
+    public ProgramaAcademico getPrograma() { return programa; }
     public ArrayList<Double> getNotas() { return notas; }
     public void agregarNota(double nota) {
         if (this.notas.size() < 3){
@@ -225,16 +225,16 @@ class SGA {
         System.out.println("1. Curso | 2. Diplomado | 3. Bootcamp");
         System.out.print("Opción: ");
         String tipoProg = scanner.nextLine();
-        String prog;
+        ProgramaAcademico prog;
         switch (tipoProg) {
             case "1":
-                prog = "Curso";
+                prog = new Curso();
                 break;
             case "2":
-                prog = "Diplomado";
+                prog = new Diplomado();
                 break;
             case "3":
-                prog = "Bootcamp";
+                prog = new Bootcamp();
                 break;
             default:
                 System.out.println("Opción de programa no válida. Registro cancelado.");
@@ -256,7 +256,7 @@ class SGA {
             String linea = alumno.getCedula() + ", " + 
                         alumno.getNombre() + ", " + 
                         alumno.getCorreo() + ", " + 
-                        alumno.getPrograma() + ", " + 
+                        alumno.getPrograma().getNombrePrograma() + ", " + 
                         n1 + ", " + n2 + ", " + n3 + "\n";
 
             escritor.write(linea);
@@ -304,7 +304,15 @@ class SGA {
                     String nombre = datos[1].trim();
                     String correo = datos[2].trim();
                     String progNombre = datos[3].trim();
-                    Alumno alumno = new Alumno(cedula, nombre, correo, progNombre);
+                    ProgramaAcademico progObj = null;
+                    if (progNombre.equalsIgnoreCase("Curso")) {
+                        progObj = new Curso();
+                    } else if (progNombre.equalsIgnoreCase("Diplomado")) {
+                        progObj = new Diplomado();
+                    } else if (progNombre.equalsIgnoreCase("Bootcamp")) {
+                        progObj = new Bootcamp();
+                    }
+                    Alumno alumno = new Alumno(cedula, nombre, correo, progObj);
                     // Cargar notas mayores a 0
                     for (int i = 4; i < 7; i++) {
                         double nota = Double.parseDouble(datos[i].trim());
@@ -461,15 +469,14 @@ class SGA {
         System.out.println("Alumnos aprobados en espera de certificado:\n");
         for (Alumno alumno : listaAlumnos) {
             boolean tresNotas = alumno.getNotas().size() == 3;
-            // Evalúa aprobación con el promedio si getPrograma() devuelve un String
-            boolean aprobado = (alumno.consultarPromedio() >= 10) && tresNotas;
+            boolean aprobado = alumno.getPrograma().evaluarAprobacion(alumno.getNotas()) && tresNotas;
 
             if (aprobado) {
                 double promedio = alumno.consultarPromedio();
                 colaCertificados.add(alumno);
 
                 System.out.println("\nAlumno: " + alumno.getNombre() + " | Cédula: " + alumno.getCedula() + " | Correo: " + alumno.getCorreo());
-                System.out.println("Programa: " + alumno.getPrograma() + " | Notas: " + alumno.getNotas() + " | Promedio: " + String.format("%.2f", promedio));
+                System.out.println("Programa: " + alumno.getPrograma().getNombrePrograma() + " | Notas: " + alumno.getNotas() + " | Promedio: " + String.format("%.2f", promedio));
                 System.out.println("----------------------------------------");
             }
         }
@@ -561,7 +568,7 @@ class SGA {
         for (Alumno alumno : listaAlumnos) {
             boolean tresNotas = alumno.getNotas().size() == 3;
             double promedio = alumno.consultarPromedio();
-            boolean aprobado = (promedio >= 10) && tresNotas;
+            boolean aprobado = alumno.getPrograma().evaluarAprobacion(alumno.getNotas()) && tresNotas;
             String estatus = aprobado ? "APROBADO" : "REPROBADO/PENDIENTE";
 
             System.out.println("Alumno: " + alumno.getNombre() + " | Cédula: " + alumno.getCedula() + " | Correo: " + alumno.getCorreo());
